@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        maven {
+            url "${repository_url}"
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+            name = "maven-main-cache"
+        }
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.4.0"
+    }
+
+}
+
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: "com.jfrog.artifactory"
+
+version = '1.0.0'
+group = 'com.mavi'
+
+repositories {
+    mavenCentral()
+    add buildscript.repositories.getByName("maven-main-cache")
+}
+
+dependencies {
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.5'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.8.5'
+}
+sourceCompatibility = 1.5
+
+artifactory {
+    contextUrl = "${artifactory_contextUrl}"
+    publish {
+        repository {
+            repoKey = 'libs-release-local'
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+            maven = true
+
+        }
+
+        resolve {
+            repository {
+                repoKey = 'libs-release'
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+                maven = true
+
+            }
+        }
+        defaults {
+            publications('mavenJava')
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact file(getFileName())
+        }
+    }
+}
+
+def getFileName() {
+    return "build/libs/restmodels-${version}.jar"
+}
