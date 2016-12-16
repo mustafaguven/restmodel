@@ -23,7 +23,7 @@ WARNING: If jfrog artifactory is already installed and runnable **`jump to step 
   4. in order to publish a jar, run below command 
   
     ```
-    /gradlew clean build artifactoryPublish --stacktrace
+    ./gradlew clean build artifactoryPublish --stacktrace
     ```
 
 ##STEPS TO IMPORT A JAR AS DEPENDENCY
